@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/text_viewer"
+        style="@style/text_viewer"/>
+    <LinearLayout
+        style="@style/row">
+        <LinearLayout
+            style="@style/column">
+            <Button
+                android:id="@+id/seven"
+                android:text="@string/seven"
+                style="@style/button_digit" />
+            <Button
+                android:id="@+id/four"
+                android:text="@string/four"
+                style="@style/button_digit"/>
+            <Button
+                android:id="@+id/one"
+                android:text="@string/one"
+                style="@style/button_digit" />
+            <Button
+                android:id="@+id/zero"
+                android:text="@string/zero"
+                style="@style/button_digit" />
+        </LinearLayout>
+        <LinearLayout
+            style="@style/column">
+            <Button
+                android:id="@+id/eight"
+                android:text="@string/eight"
+                style="@style/button_digit" />
+            <Button
+                android:id="@+id/five"
+                android:text="@string/five"
+                style="@style/button_digit"/>
+            <Button
+                android:id="@+id/two"
+                android:text="@string/two"
+                style="@style/button_digit" />
+            <Button
+                android:id="@+id/ten"
+                android:text="@string/ten"
+                style="@style/button_digit" />
+        </LinearLayout>
+        <LinearLayout
+            style="@style/column">
+            <Button
+                android:id="@+id/nine"
+                android:text="@string/nine"
+                style="@style/button_digit" />
+            <Button
+                android:id="@+id/six"
+                android:text="@string/six"
+                style="@style/button_digit"/>
+            <Button
+                android:id="@+id/three"
+                android:text="@string/three"
+                style="@style/button_digit" />
+            <Button
+                android:id="@+id/eleven"
+                android:text="@string/eleven"
+                style="@style/button_digit" />
+        </LinearLayout>
+        <LinearLayout
+            style="@style/column">
+            <Button
+                android:id="@+id/fifteen"
+                android:text="@string/fifteen"
+                style="@style/button_digit" />
+            <Button
+                android:id="@+id/fourteen"
+                android:text="@string/fourteen"
+                style="@style/button_digit" />
+            <Button
+                android:id="@+id/thirteen"
+                android:text="@string/thirteen"
+                style="@style/button_digit" />
+            <Button
+                android:id="@+id/twelve"
+                android:text="@string/twelve"
+                style="@style/button_digit"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="button_digits">
+        <item>@+id/zero</item>
+        <item>@+id/one</item>
+        <item>@+id/two</item>
+        <item>@+id/three</item>
+        <item>@+id/four</item>
+        <item>@+id/five</item>
+        <item>@+id/six</item>
+        <item>@+id/seven</item>
+        <item>@+id/eight</item>
+        <item>@+id/nine</item>
+        <item>@+id/ten</item>
+        <item>@+id/eleven</item>
+        <item>@+id/twelve</item>
+        <item>@+id/thirteen</item>
+        <item>@+id/fourteen</item>
+        <item>@+id/fifteen</item>
+    </array>
+</resources>
