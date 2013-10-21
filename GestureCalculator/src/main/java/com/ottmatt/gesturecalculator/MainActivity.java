@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -18,15 +19,13 @@ import java.util.List;
 
 public class MainActivity extends Activity implements View.OnClickListener{
     private static final String TAG = "MainActivity";
-    private static final int SWIPE_MIN_DISTANCE = 120;
     private static final int SWIPE_MAX_OFF_PATH = 250;
-    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
-    private static final int BACKSPACE = -1;
     private static final int DIGIT = 0;
     private static final int PARENTHESES = 1;
     private static final int EXPONENT = 2;
     private static final int MULT_DIV = 3;
     private static final int ADD_SUB = 4;
+    private static int TOUCH_SLOP;
     private GestureDetectorCompat mDetector;
     private View.OnTouchListener mDigitListener;
     private GestureDetectorCompat mViewerDetector;
@@ -37,6 +36,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ViewConfiguration vc = ViewConfiguration.get(this);
+        TOUCH_SLOP = vc.getScaledTouchSlop();
 
         mDetector = new GestureDetectorCompat(this, new GestureListener());
         mDigitListener = new View.OnTouchListener() {
@@ -87,12 +89,18 @@ public class MainActivity extends Activity implements View.OnClickListener{
     void push(String value, int order) {
         Hashtable<String, Integer> math = new Hashtable<String, Integer>();
         math.put(value, order);
-        mEquation.add(math);
+        // If the last value was an operator and this value is an operator
+        // then replace the old operator with the new one
+//        if (!mEquation.get(mEquation.size()-1).containsValue(DIGIT) &&
+            //    order != DIGIT)
+           // mEquation.set(mEquation.size()-1, math);
+       // else
+            mEquation.add(math);
     }
 
     void pop() {
-        mEquation.remove(mEquation.size() - 1);
-        Log.v(TAG, Integer.toString(mEquation.size()));
+        if (!mEquation.isEmpty())
+            mEquation.remove(mEquation.size() - 1);
     }
 
     String stackToString() {
@@ -132,23 +140,27 @@ public class MainActivity extends Activity implements View.OnClickListener{
     class GestureListener extends GestureDetector.SimpleOnGestureListener {
         private static final String TAG = "Gestures";
 
-        @Override public boolean onFling(MotionEvent e1, MotionEvent e2,
-                                         float velocityX, float velocityY) {
+        @Override public boolean onScroll(MotionEvent e1, MotionEvent e2,
+                                         float distanceX, float distanceY) {
+            float deltaX = e1.getX() - e2.getX();
+            float deltaY = e1.getY() - e2.getY();
 
             try {
-                Log.d(TAG, "onFling: " + e1.toString()+e2.toString());
-                if (Math.abs(e1.getY() - e2.getY()) <= SWIPE_MAX_OFF_PATH) {
-                    // right to left swipe
-                    if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                Log.d(TAG, "onScroll: " + e1.toString()+e2.toString());
+                if (Math.abs(deltaY) <= SWIPE_MAX_OFF_PATH) {
+                    if(deltaX > TOUCH_SLOP) {
+                        // scroll left
                         push("-", ADD_SUB);
-                    }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                    } else if (deltaX < -TOUCH_SLOP) {
+                        // scroll right
                         push("+", ADD_SUB);
                     }
                 } else {
-                    // up to down swipe
-                    if(e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
+                    if(deltaY > TOUCH_SLOP) {
+                        // scroll up
                         push("*", MULT_DIV);
-                    }  else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
+                    } else if (deltaY < -TOUCH_SLOP) {
+                        // scroll down
                         push("/", MULT_DIV);
                     }
                 }
@@ -163,27 +175,38 @@ public class MainActivity extends Activity implements View.OnClickListener{
     class ViewerGestureListener extends GestureDetector.SimpleOnGestureListener {
         private static final String TAG = "ViewerGestures";
 
-        @Override public boolean onFling(MotionEvent e1, MotionEvent e2,
-                                         float velocityX, float velocityY) {
+        @Override public boolean onSingleTapUp(MotionEvent e) {
+            int x = e.AXIS_X;
+            int y = e.AXIS_Y;
+            int viewWidth = mTextViewer.getWidth();
+            if (x < viewWidth/2)
+                pop();
+            else
+                push("=", DIGIT);
+            refreshViewer();
+            return false;
+        }
+
+        @Override public boolean onScroll(MotionEvent e1, MotionEvent e2,
+                                         float distanceX, float distanceY) {
+            float deltaX = e1.getX() - e2.getX();
+            float deltaY = e1.getY() - e2.getY();
 
             try {
-                Log.d(TAG, "onFling: " + e1.toString()+e2.toString());
-                if (Math.abs(e1.getY() - e2.getY()) <= SWIPE_MAX_OFF_PATH) {
-                    // right to left swipe
-                    Log.v(TAG, "registered a Swipe");
-                    if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                        pop();
-                        Log.v(TAG, "left");
-                    } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                        Log.v(TAG, "right");
+                Log.d(TAG, "onScroll: " + e1.toString()+e2.toString());
+                if (Math.abs(deltaY) <= SWIPE_MAX_OFF_PATH) {
+                    if (deltaX > TOUCH_SLOP) {
+                        // scroll left
+                        //pop();
+                    } else if (deltaX < TOUCH_SLOP) {
+                        // scroll left
                     }
                 } else {
-                    // up to down swipe
-                    if(e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
-                        Log.v(TAG, "up");
-                    }  else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
+                    if(deltaY > TOUCH_SLOP) {
+                        // scroll up
+                    } else if (deltaY < TOUCH_SLOP) {
+                        // scroll down
                         clearViewer();
-                        Log.v(TAG, "down");
                     }
                 }
                 refreshViewer();
