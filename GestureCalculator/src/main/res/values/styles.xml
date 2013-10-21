@@ -1,5 +1,4 @@
 <resources>
-
     <!--
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
@@ -11,12 +10,10 @@
             backward-compatibility can go here.
         -->
     </style>
-
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-
     <style name="column">
         <item name="android:orientation">vertical</item>
         <item name="android:layout_width">wrap_content</item>
@@ -29,12 +26,13 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">6</item>
     </style>
-
-    <style name="button_digit">
+    <style name="button_digit" parent="android:Widget.Holo.Button.Borderless">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">2</item>
         <item name="android:textSize">30sp</item>
+        <item name="android:textColor">#bebebe</item>
+        <item name="android:background">#000</item>
     </style>
     <style name="button_operation">
         <item name="android:layout_width">wrap_content</item>
@@ -57,5 +55,4 @@
         <item name="android:textSize">40sp</item>
         <item name="android:padding">16dp</item>
     </style>
-
 </resources>
